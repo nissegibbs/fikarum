@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Felix guide till ett vettigt fikarum</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .question {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn-start {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-yes {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-no {
+            background-color: #dc3545;
+            color: white;
+        }
+        .result-text {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>    <h1>Hej och välkommen till Felix guide till ett vettigt fikarum</h1>
+
+</head>
+<body>
+    <body>
+        <div class="container">
+            <div id="start-screen">
+                <h1>Tryck här under för att starta</h1>
+                <button class="btn btn-start" onclick="startQuiz()">Starta quiz</button>
+            </div>
+    
+            <div id="quiz-screen" style="display: none;">
+                <div class="question" id="question"></div>
+                <button class="btn btn-yes" onclick="answer(true)">Ja</button>
+                <button class="btn btn-no" onclick="answer(false)">Nej</button>
+            </div>
+    
+            <div id="result-screen" style="display: none;">
+                
+                <p id="result"></p>
+                <div id="errors"></div>
+                <button class="btn btn-start" onclick="restartQuiz()">Svara på frågorna igen</button>
+            </div>
+        </div>
+    
+        <script>
+            const questions = [
+                { text: "Är utrymmet tillräckligt stort för att alla anställda ska kunna använda det samtidigt vid raster?", correct: true, errorText: "Utrymmet är inte tillräckligt stort. Du behöver hitta ett större utrymme." },
+                { text: "Finns det tillräckligt många sittplatser och bord för alla som använder rummet?", correct: true, errorText: "Det finns för få bord och sittplatser. Du behöver fixa mer!" },
+                { text: "Är ventilationen anpassad för det antal personer som använder rummet?", correct: true, errorText: "Ventilationen är för dålig. Du behöver boka en ventilationare!" },
+                { text: "Finns det möjlighet att justera ljusstyrkan vid behov?", correct: true, errorText: "Ljusstyrkan går inte att justera. Du behöver boka en elektriker!" },
+                { text: "Är belysningen behaglig och anpassad för avkoppling?", correct: true, errorText: "Belysningen är inte behaglig. Du behöver boka en elektriker!" },
+                { text: "Är möblerna placerade på ett sätt som ger tillräckligt med utrymme för att röra sig?", correct: true, errorText: "Möblerna är placerade så att man inte kan röra sig. Du behöver anpassa möblerna eller lokalen." },
+                { text: "Finns rutiner för regelbunden städning av mat- och pausutrymmet?", correct: true, errorText: "Rutiner för städning saknas. Du behöver boka en städfirma!" },
+                { text: "Finns bekväma och ergonomiskt utformade stolar och bord för alla?", correct: true, errorText: "Det finns inte bekväma bord och stolar. Du behöver fixa det!" },
+                { text: "Är möblerna stabila och fria från skador?", correct: true, errorText: "Möblerna är inte stabila eller fria från skador. Du behöver fixa det!" },
+                { text: "Finns papperskorgar och andra avfallslösningar som töms regelbundet?", correct: true, errorText: "Papperskorg finns inte. Du behöver fixa det!" },
+                { text: "Finns mikrovågsugn och/eller andra uppvärmningsmöjligheter för mat?", correct: true, errorText: "Det finns ingen mikro. Du behöver fixa det!" },
+                { text: "Finns det kylskåp för förvaring av medhavd mat?", correct: true, errorText: "Det saknas kylskåp! Du behöver fixa ett!" },          
+                { text: "Finns det möjlighet att diska i pausutrymmet, t.ex. med diskho, rinnande vatten och diskmedel?", correct: true, errorText: "Det finns ingen möjlighet att diska. Du behöver fixa det!" },
+                { text: "Finns tillgång till rent och friskt dricksvatten i eller nära utrymmet?", correct: true, errorText: "Det finns ingen tillgång till rent dricksvatten. Du behvöver fixa det!" },
+                { text: "Är toaletten ren och försedd med tvål, vatten och handtorkning?", correct: true, errorText: "Toaletten saknar antingen tvål, vatten eller möjlighet att torka händerna. Du behöver fixa det!" },
+                { text: "Finns tillgång till toalett i närheten av mat- och pausutrymmet?", correct: true, errorText: "Det finns inte tillgång till toalett. Du behvöver fixa det!" },
+
+            ];
+    
+            let currentQuestion = 0;
+            let answers = [];
+    
+            function startQuiz() {
+                document.getElementById('start-screen').style.display = 'none';
+                document.getElementById('quiz-screen').style.display = 'block';
+                currentQuestion = 0;
+                answers = [];
+                showQuestion();
+            }
+    
+            function showQuestion() {
+                document.getElementById('question').innerText = questions[currentQuestion].text;
+            }
+    
+            function answer(isYes) {
+                answers.push(isYes);
+                currentQuestion++;
+    
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }
+    
+            function showResult() {
+                document.getElementById('quiz-screen').style.display = 'none';
+                document.getElementById('result-screen').style.display = 'block';
+
+                let errorMessages = [];
+
+                questions.forEach((q, index) => {
+                    if (answers[index] !== q.correct) {
+                        errorMessages.push(q.errorText);
+                    }
+                });
+
+                const resultText = errorMessages.length === 0 
+                    ? "Grattis! Du har fixat ett vettigt fikarum!"
+                    : "Fikarummet är inte vettigt!";
+
+                
+                const resultElement = document.getElementById('result');
+                resultElement.innerText = resultText;
+                resultElement.classList.add('result-text');
+
+                document.getElementById('errors').innerHTML = errorMessages.map(msg => `<p>${msg}</p>`).join('');
+            }
+    
+            function restartQuiz() {
+                document.getElementById('result-screen').style.display = 'none';
+                document.getElementById('start-screen').style.display = 'block';
+            }
+        </script>
+    </body>
+    </html>
+    
+</body>
+</html>
